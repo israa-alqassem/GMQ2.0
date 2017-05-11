@@ -46,7 +46,23 @@ secondary_classes_dict = {'H':'H', 'G': 'H', 'I' : 'H',
                               'C': 'C'}
 
 
-# In[18]:
+def get_pdb_model_list():
+    DIR = '/net/kihara/ialqasse/Desktop/input_files/target_pdb'
+    extension = '.mod' # same as '.pdb'
+    # the immediate directories
+    folder_list = [folder for folder in next(os.walk(DIR))[1]]
+    for folder in folder_list:
+        if folder == 'modified_pdb':
+            continue
+
+        modellist = os.listdir(DIR+'/'+folder)
+                
+        modellist = [modellist[i].split('.')[0] for i in range(0,len(modellist))]
+                
+        return modellist
+    
+    
+    
 
 def get_fasta_file_paths():
     """
@@ -58,7 +74,7 @@ def get_fasta_file_paths():
     for f in os.listdir(fasta_files_dir):
         if f.endswith(extension):
             target_id = f.split('.')[0]
-            target_fastafile_dict[target_id] = DIR+"/"+f
+            target_fastafile_dict[target_id] = fasta_files_dir+"/"+f
  
     return target_fastafile_dict
 
@@ -82,6 +98,37 @@ def get_pdb_file_paths():
                 target_pdbfile_dict[folder] = DIR+'/'+folder+'/'+f
 
     return target_pdbfile_dict
+
+
+def get_pdb_files(model_name):
+    DIR = '/net/kihara/ialqasse/Desktop/input_files/target_pdb'
+    extension = '.mod'
+    # the immediate directories
+    folder_list = [folder for folder in next(os.walk(DIR))[1]]
+    target_pdbfile_dict = {}
+    for folder in folder_list:
+        if folder == 'modified_pdb':
+            continue
+        for f in os.listdir(DIR+'/'+folder):
+            if f.endswith(extension) and f.startswith(model_name):
+                target_pdbfile_dict[folder] = DIR+'/'+folder+'/'+f
+
+    return target_pdbfile_dict
+
+def get_pdb_files(DIR,model_name,extension = '.mod'):
+
+    # the immediate directories
+    folder_list = [folder for folder in next(os.walk(DIR))[1]]
+    target_pdbfile_dict = {}
+    for folder in folder_list:
+        if folder == 'modified_pdb':
+            continue
+        for f in os.listdir(DIR+'/'+folder):
+            if f.endswith(extension) and f.startswith(model_name):
+                target_pdbfile_dict[folder] = DIR+'/'+folder+'/'+f
+
+    return target_pdbfile_dict
+
 
 
 # In[20]:
@@ -145,4 +192,15 @@ def align_output_str_with_residue_seq(str1,seq1):
             new_str1 += str1[index]
             index += 1
     return new_str1
+
+
+
+def file_exist(filename):
+    if not os.path.exists(filename):
+        return False
+
+    if os.stat(filename).st_size == 0:
+        return False
+    
+    return True
 
